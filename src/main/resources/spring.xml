@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="ds" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/ssmmusic?useSSL=false&amp;setUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=UTC&amp;writeBatchedStatements=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="Admin@123"/>
+    </bean>
+
+    <bean id="sf" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:myBatis.xml"/>
+        <property name="dataSource" ref="ds"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactory" ref="sf"/>
+        <property name="basePackage" value="cn.happyOnion801.SSMMusic.dao"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="ds"/>
+    </bean>
+
+    <bean id="utils" class="cn.happyOnion801.SSMMusic.utils.Utils"/>
+
+    <bean id="fileConfig" class="cn.happyOnion801.SSMMusic.utils.FileConfig">
+        <property name="bathPath" value="/home/zhanghao/下载/music"/>
+        <property name="lyricPath" value="lrc"/>
+        <property name="musicPath" value="musics"/>
+        <property name="picturePath" value="images"/>
+        <property name="videoPath" value="video"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <tx:advice transaction-manager="transactionManager" id="transactionInterceptor">
+        <tx:attributes>
+            <tx:method name="*" isolation="DEFAULT" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+            <tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+            <tx:method name="del*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="pt" expression="execution(* cn.happyOnion801.SSMMusic.service.*.*(..))"/>
+        <aop:advisor advice-ref="transactionInterceptor" pointcut-ref="pt"/>
+    </aop:config>
+
+    <context:component-scan base-package="cn.happyOnion801.SSMMusic.service"/>
+
+</beans>

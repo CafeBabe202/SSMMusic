@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.happyOnion801.SSMMusic.dao.MessageMapper">
+  <resultMap id="BaseResultMap" type="cn.happyOnion801.SSMMusic.bean.Message">
+    <id column="messageId" jdbcType="INTEGER" property="messageid" />
+    <result column="messageComment" jdbcType="VARCHAR" property="messagecomment" />
+    <result column="messageTime" jdbcType="TIMESTAMP" property="messagetime" />
+    <result column="videoId" jdbcType="INTEGER" property="videoid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <association property="user" javaType="cn.happyOnion801.SSMMusic.bean.User" column="uid" select="cn.happyOnion801.SSMMusic.dao.UserMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    messageId, messageComment, messageTime, videoId, uid
+  </sql>
+  <select id="selectByExample" parameterType="cn.happyOnion801.SSMMusic.bean.MessageExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from message
+    where messageId = #{messageid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from message
+    where messageId = #{messageid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.happyOnion801.SSMMusic.bean.MessageExample">
+    delete from message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.happyOnion801.SSMMusic.bean.Message">
+    insert into message (messageId, messageComment, messageTime, 
+      videoId, uid)
+    values (#{messageid,jdbcType=INTEGER}, #{messagecomment,jdbcType=VARCHAR}, #{messagetime,jdbcType=TIMESTAMP}, 
+      #{videoid,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.happyOnion801.SSMMusic.bean.Message">
+    insert into message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="messageid != null">
+        messageId,
+      </if>
+      <if test="messagecomment != null">
+        messageComment,
+      </if>
+      <if test="messagetime != null">
+        messageTime,
+      </if>
+      <if test="videoid != null">
+        videoId,
+      </if>
+      <if test="uid != null">
+        uid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="messageid != null">
+        #{messageid,jdbcType=INTEGER},
+      </if>
+      <if test="messagecomment != null">
+        #{messagecomment,jdbcType=VARCHAR},
+      </if>
+      <if test="messagetime != null">
+        #{messagetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="videoid != null">
+        #{videoid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.happyOnion801.SSMMusic.bean.MessageExample" resultType="java.lang.Long">
+    select count(*) from message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update message
+    <set>
+      <if test="record.messageid != null">
+        messageId = #{record.messageid,jdbcType=INTEGER},
+      </if>
+      <if test="record.messagecomment != null">
+        messageComment = #{record.messagecomment,jdbcType=VARCHAR},
+      </if>
+      <if test="record.messagetime != null">
+        messageTime = #{record.messagetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.videoid != null">
+        videoId = #{record.videoid,jdbcType=INTEGER},
+      </if>
+      <if test="record.uid != null">
+        uid = #{record.uid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update message
+    set messageId = #{record.messageid,jdbcType=INTEGER},
+      messageComment = #{record.messagecomment,jdbcType=VARCHAR},
+      messageTime = #{record.messagetime,jdbcType=TIMESTAMP},
+      videoId = #{record.videoid,jdbcType=INTEGER},
+      uid = #{record.uid,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.happyOnion801.SSMMusic.bean.Message">
+    update message
+    <set>
+      <if test="messagecomment != null">
+        messageComment = #{messagecomment,jdbcType=VARCHAR},
+      </if>
+      <if test="messagetime != null">
+        messageTime = #{messagetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="videoid != null">
+        videoId = #{videoid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null">
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where messageId = #{messageid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.happyOnion801.SSMMusic.bean.Message">
+    update message
+    set messageComment = #{messagecomment,jdbcType=VARCHAR},
+      messageTime = #{messagetime,jdbcType=TIMESTAMP},
+      videoId = #{videoid,jdbcType=INTEGER},
+      uid = #{uid,jdbcType=INTEGER}
+    where messageId = #{messageid,jdbcType=INTEGER}
+  </update>
+</mapper>
